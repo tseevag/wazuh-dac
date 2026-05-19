@@ -1,0 +1,49 @@
+name: Check Rule ID Conflicts
+on:
+  pull_request:
+    branches: [ "main" ]
+    # paths: ["**.xml"]
+
+jobs:
+  check-xml-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install xmllint
+        run: sudo apt-get install -y libxml2-utils
+
+      - name: Check XML syntax
+        run: |
+          find . -name "*.xml" | while read file; do
+            echo "Checking: $file"
+            xmllint <(echo "<root>"; cat "$file"; echo "</root>") 2>&1
+            if [ $? -ne 0 ]; then
+              echo "❌ XML syntax error in: $file"
+              exit 1
+            fi
+          done
+          echo "✅ All XML files passed syntax check"
+
+  check-rule-ids:
+    runs-on: ubuntu-latest
+    needs: check-xml-syntax
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Fetch main branch
+        run: git fetch origin main
+
+      - name: Run rule ID conflict checker
+        run: python check_rule_ids.py

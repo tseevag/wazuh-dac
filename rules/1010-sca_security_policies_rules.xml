@@ -1,0 +1,124 @@
+<!-- 
+  Security configuration assesment ruleshet extended for incorporating leapfrog security policy as well as Inpart.
+-->
+<!-- SCA ruleid reference
+    19007 - failed
+    19008 - passed
+    19009 - not applicable
+    19010 - status changed from failed to passed
+    19015 - status changed from not applicable to passed    
+-->
+<group name="sca,custom_security_policy,">
+  <rule id="100001" level="14">
+    <if_sid>19007</if_sid>
+    <field name="sca.check.id">1\d0020</field>
+    <options>no_full_log</options>
+    <description>NinjaRMM Agent is not running.</description>
+    <group>lft_security_policy</group>
+  </rule>
+
+  <rule id="100002" level="14">
+    <if_sid>19007</if_sid>
+    <field name="sca.check.id">1\d0021</field>
+    <options>no_full_log</options>
+    <description>Bitdefender Endpoint Security is not running.</description>
+    <group>lft_security_policy</group>
+  </rule>
+
+  <rule id="100003" level="12">
+    <if_sid>19007</if_sid>
+    <field name="sca.check.id">1\d0030</field>
+    <options>no_full_log</options>
+    <description>Hard Drive encryption is not enabled.</description>
+    <group>lft_security_policy</group>
+  </rule>
+  
+  <rule id="100004" level="10">
+    <if_sid>19007,19015</if_sid>
+    <field name="sca.check.id">1\d000\d</field>
+    <options>no_full_log</options>
+    <description>Password policy is not configured correctly.</description>
+    <group>lft_security_policy</group>
+  </rule>
+  
+  <rule id="100005" level="10">
+    <if_sid>19007,19015,19015</if_sid>
+    <field name="sca.check.id">1\d001\d</field>
+    <options>no_full_log</options>
+    <description>Screen lockout policy is not configured correctly.</description>
+    <group>lft_security_policy</group>
+  </rule>
+  
+  <rule id="100006" level="4">
+    <if_sid>19010, 19015</if_sid>
+    <field name="sca.check.id">1\d0020</field>
+    <options>no_full_log</options>
+    <description>NinjaRMM Agent has started running.</description>
+    <group>lft_security_policy</group>
+  </rule>
+
+  <rule id="100007" level="4">
+    <if_sid>19010, 19015</if_sid>
+    <field name="sca.check.id">1\d0021</field>
+    <options>no_full_log</options>
+    <description>Bitdefender Endpoint Security has started running.</description>
+    <group>lft_security_policy</group>
+  </rule>
+
+  <rule id="100008" level="4">
+    <if_sid>19010, 19015</if_sid>
+    <field name="sca.check.id">1\d0030</field>
+    <options>no_full_log</options>
+    <description>Hard Drive encryption is enabled.</description>
+    <group>lft_security_policy</group>
+  </rule>
+  
+  <rule id="100009" level="4">
+    <if_sid>19010, 19015</if_sid>
+    <field name="sca.check.id">1\d000\d</field>
+    <options>no_full_log</options>
+    <description>Password policy has beed configured.</description>
+    <group>lft_security_policy</group>
+  </rule>
+  
+  <rule id="100010" level="4">
+    <if_sid>19010, 19015</if_sid>
+    <field name="sca.check.id">1\d001\d</field>
+    <options>no_full_log</options>
+    <description>Screen lockout policy has beed configured.</description>
+    <group>lft_security_policy</group>
+  </rule>
+
+  <rule id="100011" level="14">
+    <if_sid>19007</if_sid>
+    <field name="sca.check.id">1\d0029</field>
+    <options>no_full_log</options>
+    <description>Senseon Sensor is not running.</description>
+    <group>inpart_security_policy</group>
+  </rule>
+
+  <rule id="100012" level="4">
+    <if_sid>19010, 19015</if_sid>
+    <field name="sca.check.id">1\d0029</field>
+    <options>no_full_log</options>
+    <description>Senseon Sensor has started running.</description>
+    <group>inpart_security_policy</group>
+  </rule>
+  
+  <rule id="100013" level="14">
+    <if_sid>19007</if_sid>
+    <field name="sca.check.id">1\d0028</field>
+    <options>no_full_log</options>
+    <description>JumpCloud Agent is not running.</description>
+    <group>inpart_security_policy</group>
+  </rule>
+
+   <rule id="100014" level="4">
+    <if_sid>19010, 19015</if_sid>
+    <field name="sca.check.id">1\d0028</field>
+    <options>no_full_log</options>
+    <description>JumpCloud Agent has started running.</description>
+    <group>inpart_security_policy</group>
+  </rule> 
+
+</group>

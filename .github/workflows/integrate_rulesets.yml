@@ -1,0 +1,67 @@
+name: Update Rulesets on SIEM
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [ "main" ]
+    paths: ["**.xml"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Verify deploy script immutability
+        run: |
+          attr=$(lsattr /usr/local/bin/wazuh-deploy.sh 2>/dev/null | cut -c5)
+          if [ "$attr" != "i" ]; then
+            logger -t wazuh-deploy -p local6.alert "event=immutable_check_failed user=$(whoami)"
+            echo "::error::Deploy script immutable attribute not set. Aborting."
+            exit 1
+          fi
+
+      - name: Deploy Wazuh rules
+        id: deploy
+        run: sudo /usr/local/bin/wazuh-deploy.sh
+
+      - name: Notify Slack - Success
+        if: success()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          /usr/bin/curl -sf -X POST "$SLACK_WEBHOOK_URL" \
+            -H 'Content-Type: application/json' \
+            -d "{
+              \"text\": \":white_check_mark: *SIEM Rules Deployed Successfully*\",
+              \"blocks\": [
+                {
+                  \"type\": \"section\",
+                  \"text\": {
+                    \"type\": \"mrkdwn\",
+                    \"text\": \":white_check_mark: *SIEM Rules Deployed Successfully*\n• *Commit:* \`${GITHUB_SHA:0:8}\`\n• *Actor:* $GITHUB_ACTOR\n• *Branch:* $GITHUB_REF_NAME\n• *Run:* <$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|View>\"
+                  }
+                }
+              ]
+            }"
+
+      - name: Notify Slack - Failure
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          /usr/bin/curl -sf -X POST "$SLACK_WEBHOOK_URL" \
+            -H 'Content-Type: application/json' \
+            -d "{
+              \"text\": \":rotating_light: *SIEM Rules Deployment FAILED*\",
+              \"blocks\": [
+                {
+                  \"type\": \"section\",
+                  \"text\": {
+                    \"type\": \"mrkdwn\",
+                    \"text\": \":rotating_light: *SIEM Rules Deployment FAILED*\n• *Commit:* \`${GITHUB_SHA:0:8}\`\n• *Actor:* $GITHUB_ACTOR\n• *Branch:* $GITHUB_REF_NAME\n• *Run:* <$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|View>\n• Check syslog on server: \`sudo grep wazuh-deploy /var/log/messages | tail -10\`\"
+                  }
+                }
+              ]
+            }"
