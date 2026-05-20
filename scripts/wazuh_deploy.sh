@@ -136,7 +136,7 @@ fi
 
 # Backup current config (compressed tar archive with atomic write)
 BACKUP_TAR="ossec-etc-$(/usr/bin/date --utc '+%Y-%m-%dT%H%M%S').tar.gz"
-BACKUP_FILE="${BACKUP_BASE}/wazuh-deploy-${BACKUP_TIMESTAMP}.tar.gz"
+BACKUP_FILE="${BACKUP_BASE}/${BACKUP_TAR}"
 BACKUP_TMP="${BACKUP_BASE}/.backup.tar.gz.tmp"
 /usr/bin/mkdir -p "$BACKUP_BASE"
 stderr_output=$(/usr/bin/tar -czf "$BACKUP_TMP" --selinux -C "$TARGET_DIR" . 2>&1) || {
