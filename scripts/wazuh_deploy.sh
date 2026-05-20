@@ -1,6 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
+# Readonly configuration variables
+readonly REPO_DIR="/opt/wazuh-dac"
+readonly TARGET_DIR="/var/ossec/etc"
+readonly BACKUP_BASE="/var/ossec/actions-backups"
+readonly GIT_BRANCH="main"
+readonly SERVICE_NAME="wazuh-manager"
+readonly LOG_TAG="actions-wazuh-deploy"
+readonly LOG_FACILITY="local6"
+readonly LOCK_FILE="/var/run/wazuh-deploy.lock"
+readonly BACKUP_KEEP=3
+
 ###############################################################################
 # Phase 1: Environment Sanitization
 ###############################################################################
@@ -22,7 +33,7 @@ while IFS='=' read -r var_name _; do
     PATH|BASHOPTS|BASH_VERSINFO|BASH_VERSION|SHELLOPTS|UID|EUID|PPID|IFS|PWD|OLDPWD|_|TERM|SHLVL|BASH|SHELL)
       ;;
     *)
-      /usr/bin/logger -t wazuh-deploy -p auth.alert "event=precondition_failed reason=env_contamination var=$var_name"
+      /usr/bin/logger -t "$LOG_TAG" -p auth.alert "event=precondition_failed reason=env_contamination var=$var_name"
       exit 1
       ;;
   esac
@@ -34,17 +45,6 @@ done < <(/usr/bin/env)
 
 # Restrictive umask before any file operations
 umask 0027
-
-# Readonly configuration variables
-readonly REPO_DIR="/opt/wazuh-dac"
-readonly TARGET_DIR="/var/ossec/etc"
-readonly BACKUP_BASE="/var/ossec/backups"
-readonly GIT_BRANCH="main"
-readonly SERVICE_NAME="wazuh-manager"
-readonly LOG_TAG="wazuh-deploy"
-readonly LOG_FACILITY="local6"
-readonly LOCK_FILE="/var/run/wazuh-deploy.lock"
-readonly BACKUP_KEEP=3
 
 ###############################################################################
 # Logging Functions
@@ -135,8 +135,8 @@ if [ "$decoder_count" -eq 0 ] || [ "$rule_count" -eq 0 ]; then
 fi
 
 # Backup current config (compressed tar archive with atomic write)
-BACKUP_TIMESTAMP=$(/usr/bin/date --utc '+%Y-%m-%dT%H%M%SZ')
-BACKUP_FILE="${BACKUP_BASE}/${BACKUP_TIMESTAMP}.tar.gz"
+BACKUP_TIMESTAMP=$(/usr/bin/date --utc '+%Y-%m-%dT%H%M')
+BACKUP_FILE="${BACKUP_BASE}/wazuh-deploy-${BACKUP_TIMESTAMP}.tar.gz"
 BACKUP_TMP="${BACKUP_BASE}/.backup.tar.gz.tmp"
 /usr/bin/mkdir -p "$BACKUP_BASE"
 stderr_output=$(/usr/bin/tar -czf "$BACKUP_TMP" --selinux -C "$TARGET_DIR" . 2>&1) || {
@@ -268,9 +268,3 @@ if [ "$daemons_ok" = false ]; then
 fi
 
 log_entry "event=health_check outcome=success commit=$COMMIT_SHA"
-
-###############################################################################
-# Phase 5: Outcome Logging
-###############################################################################
-
-log_entry "event=deploy_complete outcome=success commit=$COMMIT_SHA"
