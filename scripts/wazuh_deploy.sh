@@ -10,7 +10,7 @@ readonly SERVICE_NAME="wazuh-manager"
 readonly LOG_TAG="actions-wazuh-deploy"
 readonly LOG_FACILITY="local6"
 readonly LOCK_FILE="/var/run/wazuh-deploy.lock"
-readonly BACKUP_KEEP=3
+readonly BACKUP_KEEP=2
 
 ###############################################################################
 # Phase 1: Environment Sanitization
