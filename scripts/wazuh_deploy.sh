@@ -36,7 +36,7 @@ done < <(/usr/bin/env)
 umask 0027
 
 # Readonly configuration variables
-readonly REPO_DIR="/opt/LAB-wazuh-dac"
+readonly REPO_DIR="/opt/wazuh-dac"
 readonly TARGET_DIR="/var/ossec/etc"
 readonly BACKUP_BASE="/var/ossec/backups"
 readonly GIT_BRANCH="main"
