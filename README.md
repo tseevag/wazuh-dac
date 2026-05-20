@@ -80,7 +80,7 @@ The script (`/usr/local/bin/wazuh-deploy.sh`) executes in this order:
 
 ## Backup Strategy
 
-Backups are stored in `/var/ossec/backups/` with timestamps:
+Backups are stored in `/var/ossec/backups/` with timestamps
 
 ```
 /var/ossec/backups/
