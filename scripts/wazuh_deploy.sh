@@ -160,7 +160,7 @@ log_entry "event=deploy_start commit=$COMMIT_SHA phase=sync_decoders"
 stderr_output=$( {
   /usr/bin/rm -rf "$TARGET_DIR/decoders.new" &&
   /usr/bin/cp -a "$REPO_DIR/decoders" "$TARGET_DIR/decoders.new" &&
-  /usr/bin/mv "$TARGET_DIR/decoders" "$TARGET_DIR/decoders.old" &&
+  { [ -d "$TARGET_DIR/decoders" ] && /usr/bin/mv "$TARGET_DIR/decoders" "$TARGET_DIR/decoders.old" || true; } &&
   /usr/bin/mv "$TARGET_DIR/decoders.new" "$TARGET_DIR/decoders" &&
   /usr/bin/rm -rf "$TARGET_DIR/decoders.old"
 } 2>&1) || {
