@@ -1,0 +1,15 @@
+<group name="win_evt_channel,windows,">
+  <rule id="92657" level="12" overwrite="yes">
+    <if_sid>92652</if_sid>
+    <field name="win.eventdata.workstationName" type="pcre2">.+</field>
+    <description>Successful Remote Logon Detected - User:$(win.eventdata.subjectDomainName)\$(win.eventdata.targetUserName) - NTLM authentication, possible pass-the-hash attack - Possible RDP connection. Verify that $(win.eventdata.workstationName) is allowed to perform RDP connections</description>
+    <mitre>
+      <id>T1550.002</id>
+      <id>T1078.002</id>
+      <id>T1021.001</id>
+    </mitre>
+    <group>
+      authentication_success,pci_dss_10.2.5,gpg13_7.1,gpg13_7.2,gdpr_IV_32.2,hipaa_164.312.b,nist_800_53_AU.14,nist_800_53_AC.7,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,possible_pass_the_hash,windows_tuned
+    </group>
+  </rule>
+</group>
