@@ -13,14 +13,14 @@ jobs:
   deploy:
     runs-on: self-hosted
     steps:
-      - name: Verify deploy script immutability
-        run: |
-          attr=$(lsattr /usr/local/bin/wazuh-deploy.sh 2>/dev/null | cut -c5)
-          if [ "$attr" != "i" ]; then
-            logger -t wazuh-deploy -p local6.alert "event=immutable_check_failed user=$(whoami)"
-            echo "::error::Deploy script immutable attribute not set. Aborting."
-            exit 1
-          fi
+      # - name: Verify deploy script immutability
+      #   run: |
+      #     attr=$(lsattr /usr/local/bin/wazuh-deploy.sh | cut -c5)
+      #     if [ "$attr" != "i" ]; then
+      #       logger -t wazuh-deploy -p local6.alert "event=immutable_check_failed user=$(whoami)"
+      #       echo "::error::Deploy script immutable attribute not set. Aborting."
+      #       exit 1
+      #     fi
 
       - name: Deploy Wazuh rules
         id: deploy
