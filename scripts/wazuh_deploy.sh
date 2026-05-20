@@ -151,7 +151,9 @@ stderr_output=$(/usr/bin/tar -czf "$BACKUP_TMP" --selinux -C "$TARGET_DIR" . 2>&
 # Prune old backups — keep only the most recent N archives
 while IFS= read -r old_backup; do
   /usr/bin/rm -f "$old_backup"
-done < <(/usr/bin/find "$BACKUP_BASE" -maxdepth 1 -name '*.tar.gz' -type f | /usr/bin/sort -r | /usr/bin/tail -n +$((BACKUP_KEEP + 1)))
+done < <(/usr/bin/find "$BACKUP_BASE" -maxdepth 1 -name 'ossec-etc-*.tar.gz' -type f | /usr/bin/sort -r | /usr/bin/tail -n +$((BACKUP_KEEP + 1)))
+# Remove any legacy-named backups from prior script versions
+/usr/bin/find "$BACKUP_BASE" -maxdepth 1 -name 'wazuh-deploy-*.tar.gz' -type f -delete
 
 # Sync decoders (copy to staging, then atomic rename-swap)
 log_entry "event=deploy_start commit=$COMMIT_SHA phase=sync_decoders"
