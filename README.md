@@ -44,6 +44,15 @@ GitHub Actions (self-hosted runner on Wazuh server)
 └── check_rule_ids.py             # Rule ID uniqueness checker
 ```
 
+## Documentation
+
+For detailed guides, see the `docs/` directory:
+
+- **[Setup Guide](docs/setup_guide.md)** — Step-by-step server deployment and pipeline configuration (start here)
+- **[Architecture](docs/architecture.md)** — System architecture, data flow, and component descriptions
+- **[Security](docs/security.md)** — Security model, threat mitigations, and control rationale
+- **[Troubleshooting](docs/troubleshooting.md)** — Structured diagnostic procedures and resolution steps
+
 ## Security Controls
 
 | Control | Implementation |
@@ -124,85 +133,6 @@ The workflow sends Slack messages on deploy success or failure.
 > 🚨 SIEM Rules Deployment FAILED
 > Commit, actor, branch, link to run, syslog check hint
 
-## Server Deployment Procedure
-
-### Prerequisites
-
-- Wazuh manager server (RHEL/CentOS)
-- `ci-runner` user with self-hosted GitHub Actions runner
-- Root access for installation
-
-### Step 1: Copy script to server
-
-```bash
-scp -i /path/to/key.pem scripts/wazuh-deploy.sh user@192.168.95.200:/tmp/wazuh-deploy.sh
-```
-
-### Step 2: Install the deploy script
-
-```bash
-ssh -i /path/to/key.pem user@192.168.95.200
-
-# Remove old immutable flag if exists
-sudo chattr -i /usr/local/bin/wazuh-deploy.sh 2>/dev/null || true
-
-# Install
-sudo cp /tmp/wazuh-deploy.sh /usr/local/bin/wazuh-deploy.sh
-sudo chown root:root /usr/local/bin/wazuh-deploy.sh
-sudo chmod 0700 /usr/local/bin/wazuh-deploy.sh
-sudo chattr +i /usr/local/bin/wazuh-deploy.sh
-
-# Verify
-lsattr /usr/local/bin/wazuh-deploy.sh
-# Expected: ----i---------e-- /usr/local/bin/wazuh-deploy.sh
-```
-
-Or use the install script:
-```bash
-sudo /tmp/install-deploy-script.sh /tmp/wazuh-deploy.sh
-```
-
-### Step 3: Configure sudoers
-
-```bash
-echo 'ci-runner ALL=(root) NOPASSWD:NOSETENV: /usr/local/bin/wazuh-deploy.sh' | sudo tee /etc/sudoers.d/github-actions
-sudo chmod 0440 /etc/sudoers.d/github-actions
-sudo visudo -c
-# Expected: parsed OK
-```
-
-### Step 4: Create backup directory
-
-```bash
-sudo mkdir -p /var/ossec/backups
-sudo chown root:root /var/ossec/backups
-sudo chmod 0750 /var/ossec/backups
-```
-
-### Step 5: Verify the repo clone exists
-
-```bash
-ls /opt/wazuh-dac/rules/*.xml
-ls /opt/wazuh-dac/decoders/*.xml
-```
-
-### Step 6: Test the deployment
-
-```bash
-sudo /usr/local/bin/wazuh-deploy.sh
-echo "Exit code: $?"
-# Expected: 0
-
-# Check logs
-grep wazuh-deploy /var/log/messages | tail -10
-```
-
-### Step 7: Clean up
-
-```bash
-rm /tmp/wazuh-deploy.sh
-```
-
 ## Updating the Deploy Script
 
 The script is protected with `chattr +i`. To update:
@@ -269,31 +199,3 @@ sudo systemctl restart rsyslog
 4. On merge, the pipeline deploys automatically
 5. If the rules are invalid, auto-rollback keeps Wazuh running
 
-## Troubleshooting
-
-**Deployment failed — check syslog:**
-```bash
-grep wazuh-deploy /var/log/messages | tail -20
-```
-
-**Wazuh not starting after manual changes:**
-```bash
-# Restore from latest backup
-sudo rsync -a --delete /var/ossec/backups/latest/ /var/ossec/etc/
-sudo chown -R wazuh:wazuh /var/ossec/etc/decoders /var/ossec/etc/rules
-sudo systemctl restart wazuh-manager
-```
-
-**Immutability check failing in workflow:**
-```bash
-sudo chattr +i /usr/local/bin/wazuh-deploy.sh
-lsattr /usr/local/bin/wazuh-deploy.sh   # verify 'i' flag
-```
-
-**Concurrent execution blocked:**
-```bash
-# Check if lock file is held
-fuser /var/run/wazuh-deploy.lock
-# If stale, remove it
-rm -f /var/run/wazuh-deploy.lock
-```
