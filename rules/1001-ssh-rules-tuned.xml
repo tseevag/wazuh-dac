@@ -1,5 +1,5 @@
 <group name="syslog,sshd,">
-    <rule id="5710" level="4" overwrite="yes">
+    <rule id="5710" level="-1" overwrite="yes">
     <if_sid>5700</if_sid>
     <match>illegal user|invalid user</match>
     <description>sshd: Attempt to login using a non-existent user</description>
