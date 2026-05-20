@@ -135,7 +135,7 @@ if [ "$decoder_count" -eq 0 ] || [ "$rule_count" -eq 0 ]; then
 fi
 
 # Backup current config (compressed tar archive with atomic write)
-BACKUP_TIMESTAMP=$(/usr/bin/date --utc '+%Y-%m-%dT%H%M')
+BACKUP_TAR="ossec-etc-$(/usr/bin/date --utc '+%Y-%m-%dT%H%M%S').tar.gz"
 BACKUP_FILE="${BACKUP_BASE}/wazuh-deploy-${BACKUP_TIMESTAMP}.tar.gz"
 BACKUP_TMP="${BACKUP_BASE}/.backup.tar.gz.tmp"
 /usr/bin/mkdir -p "$BACKUP_BASE"
