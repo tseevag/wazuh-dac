@@ -21,7 +21,7 @@
 <group name="windows,windows_system,modified_rules,">
   <rule id="61110" level="6" frequency="8" timeframe="240" overwrite="yes">
     <if_matched_sid>61102</if_matched_sid>
-    <description>Multiple System error events</description>
+    <description>Multiple System error event</description>
     <options>no_full_log</options>
   </rule>
 </group>
