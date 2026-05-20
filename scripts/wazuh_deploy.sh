@@ -159,8 +159,11 @@ done < <(/usr/bin/find "$BACKUP_BASE" -maxdepth 1 -name 'ossec-etc-*.tar.gz' -ty
 log_entry "event=deploy_start commit=$COMMIT_SHA phase=sync_decoders"
 stderr_output=$( {
   /usr/bin/rm -rf "$TARGET_DIR/decoders.new" &&
+  /usr/bin/rm -rf "$TARGET_DIR/decoders.old" &&
   /usr/bin/cp -a "$REPO_DIR/decoders" "$TARGET_DIR/decoders.new" &&
-  /usr/bin/mv "$TARGET_DIR/decoders" "$TARGET_DIR/decoders.old" &&
+  if [ -d "$TARGET_DIR/decoders" ]; then
+    /usr/bin/mv "$TARGET_DIR/decoders" "$TARGET_DIR/decoders.old"
+  fi &&
   /usr/bin/mv "$TARGET_DIR/decoders.new" "$TARGET_DIR/decoders" &&
   /usr/bin/rm -rf "$TARGET_DIR/decoders.old"
 } 2>&1) || {
@@ -175,8 +178,11 @@ stderr_output=$( {
 log_entry "event=deploy_start commit=$COMMIT_SHA phase=sync_rules"
 stderr_output=$( {
   /usr/bin/rm -rf "$TARGET_DIR/rules.new" &&
+  /usr/bin/rm -rf "$TARGET_DIR/rules.old" &&
   /usr/bin/cp -a "$REPO_DIR/rules" "$TARGET_DIR/rules.new" &&
-  /usr/bin/mv "$TARGET_DIR/rules" "$TARGET_DIR/rules.old" &&
+  if [ -d "$TARGET_DIR/rules" ]; then
+    /usr/bin/mv "$TARGET_DIR/rules" "$TARGET_DIR/rules.old"
+  fi &&
   /usr/bin/mv "$TARGET_DIR/rules.new" "$TARGET_DIR/rules" &&
   /usr/bin/rm -rf "$TARGET_DIR/rules.old"
 } 2>&1) || {
