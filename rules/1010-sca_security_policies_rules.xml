@@ -49,7 +49,7 @@
     <group>lft_security_policy</group>
   </rule>
   
-  <rule id="61110" level="4">
+  <rule id="100010" level="-1">
     <if_sid>19010, 19015</if_sid>
     <field name="sca.check.id">1\d001\d</field>
     <options>no_full_log</options>
