@@ -9,12 +9,12 @@
 
   <rule id="100011" level="10">
     <if_sid>550,553,554</if_sid>
-    <field name="syscheck.path" type="pcre2">^/usr/local/bin/</field>
+    <field name="syscheck.path">/usr/local/bin/wazuh-deploy.sh</field>
     <description>FIM: File integrity change detected in /usr/local/bin</description>
     <mitre>
       <id>T1565.001</id>
     </mitre>
-    <group>syscheck,syscheck_entry_modified,local_syscheck_critical,</group>
+    <group>syscheck,syscheck_entry_modified,local_syscheck_critical,extended_rule, </group>
   </rule>
 
 </group>
