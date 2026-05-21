@@ -29,7 +29,7 @@ GIT_BRANCH="main"
 WAZUH_BASE="/var/ossec"
 BACKUP_BASE="${WAZUH_BASE}/actions-backups"
 SERVICE_NAME="wazuh-manager"
-DEPLOY_SCRIPT="/usr/local/bin/wazuh_deploy.sh"
+DEPLOY_SCRIPT="/usr/local/bin/wazuh-deploy.sh"
 
 # =============================================================================
 # Output Helpers
