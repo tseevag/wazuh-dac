@@ -1,13 +1,13 @@
 [Unit]
-Description=Service to keep the actions runner running
+Description=GitHub Actions Runner Service
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-User=ci-runner
+User=github-runner
 WorkingDirectory=/home/ci-runner/actions-runner
-ExecStart=/bin/bash /home/ci-runner/actions-runner/run.sh
+ExecStart=/bin/bash /home/ci-runner/actions-runner/runsvc.sh
 Restart=always
 RestartSec=5
 
