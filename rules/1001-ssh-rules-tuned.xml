@@ -10,7 +10,7 @@
   <rule id="100011" level="10">
     <if_sid>550,553,554</if_sid>
     <field name="syscheck.path">/usr/local/bin/wazuh-deploy.sh</field>
-    <description>FIM: File integrity change detected in /usr/local/bin</description>
+    <description>FIM: File integrity change detected in /usr/local/bin by $(syscheck.audit.user.name)</description>
     <mitre>
       <id>T1565.001</id>
     </mitre>
