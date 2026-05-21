@@ -1,0 +1,15 @@
+[Unit]
+Description=GitHub Actions Runner Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=github-runner
+WorkingDirectory=/home/ci-runner/actions-runner
+ExecStart=/bin/bash /home/ci-runner/actions-runner/runsvc.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
